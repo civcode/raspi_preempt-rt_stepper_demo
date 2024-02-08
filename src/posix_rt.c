@@ -14,7 +14,7 @@
 
 
 #define WORKER_THREAD_PRIORITY (80)
-#define WORKER_THREAD_CPU_AFFINITY (3)
+#define WORKER_THREAD_CPU_AFFINITY (1)
  
  /*
 void *thread_func(void *data)
@@ -33,6 +33,7 @@ int main(int argc, char* argv[])
         struct sched_param param;
         pthread_attr_t attr;
         pthread_t thread;
+        cpu_set_t cpuset;
         int ret;
  
         /* Lock memory */
@@ -77,24 +78,17 @@ int main(int argc, char* argv[])
         
         /* Set CPU affinity */
         unsigned int cpu_count = sysconf(_SC_NPROCESSORS_ONLN);
-        cpu_set_t cpuset;
-        //for (int i=0; i<cpu_count; i++) {
-                //CPU_ZERO(&cpuset);
-                //CPU_SET(i, &cpuset);
-        //}
+        printf("cpu_count: %d\n", cpu_count);
+
         CPU_ZERO(&cpuset);
         CPU_SET(WORKER_THREAD_CPU_AFFINITY, &cpuset);
-        ret = pthread_setaffinity_np(&attr, sizeof(cpu_set_t), &cpuset);
+        //ret = pthread_setaffinity_np(&attr, sizeof(cpu_set_t), &cpuset);
+        //ret = pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
+        ret = pthread_attr_setaffinity_np(&attr, sizeof(cpu_set_t), &cpuset);
         if (ret) {
                 printf("pthread setaffinity failed\n");
                 goto out;
         }
-
-
-        //ret = pthread_setschedparam(pthread_self(), SCHED_FIFO, &param);
-        //if (ret) {
-        //    printf("setsched self failed\n");
-        //}
  
         /* Create a pthread with specified attributes */
         ret = pthread_create(&thread, &attr, thread_func, NULL);
