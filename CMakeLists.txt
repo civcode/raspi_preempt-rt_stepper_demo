@@ -4,7 +4,8 @@ project(stepper)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -O3")
 
-set(GCC_LINKER_FLAGS "-lpthread -lpigpio")
+#set(GCC_LINKER_FLAGS "-lpthread -lpigpio")
+set(GCC_LINKER_FLAGS "-lpthread")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${GCC_LINKER_FLAGS}")
 
 add_definitions(
